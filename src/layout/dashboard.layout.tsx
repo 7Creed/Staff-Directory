@@ -14,13 +14,7 @@ import { IconArrowUpRight, IconBellFilled } from '@tabler/icons-react'
 import { Link, useLocation, useNavigate } from '@tanstack/react-router'
 import { links } from '../data/sideBarLinks'
 
-const DashboardLayout = ({
-  children,
-  aside,
-}: {
-  children: ReactNode
-  aside?: ReactNode
-}) => {
+const DashboardLayout = ({ children }: { children: ReactNode }) => {
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure()
   const [desktopOpened] = useDisclosure(true)
   const isMobile = useMediaQuery('(max-width: 768px)')
@@ -105,7 +99,7 @@ const DashboardLayout = ({
             <br /> for easy review of your sales and management.
           </Text>
           <div className="flex items-end gap-3">
-            <Button
+            {/* <Button
               variant="filled"
               radius={'xl'}
               size="xs"
@@ -116,7 +110,7 @@ const DashboardLayout = ({
               className="bg-primary"
             >
               Download App
-            </Button>
+            </Button> */}
             <Box mb="md">
               <img src="/sidebar-image.svg" alt="Mobile App" />
             </Box>

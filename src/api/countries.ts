@@ -37,6 +37,8 @@ export const fetchData = async () => {
     )
 
     localStorage.setItem('countryData', JSON.stringify(countryStateMap))
+    console.log(countryStateMap)
+
     return countryStateMap
   } catch (error) {
     console.error('Error loading country data:', error)
