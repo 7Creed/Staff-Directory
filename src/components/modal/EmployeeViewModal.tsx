@@ -68,7 +68,6 @@ export const EmployeeViewModal = ({
         </Flex>
 
         <Stack gap="lg">
-          {/* Personal Information Section */}
           <Box>
             <Title order={5} mb="sm" c="dimmed" fw={500}>
               <Group gap="xs">
@@ -95,7 +94,6 @@ export const EmployeeViewModal = ({
             </Stack>
           </Box>
 
-          {/* Location Section */}
           <Box>
             <Title order={5} mb="sm" c="dimmed" fw={500}>
               <Group gap="xs">
