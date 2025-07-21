@@ -153,7 +153,7 @@ function App() {
               className="rounded-appRadius"
               searchable
               clearable
-              nothingFoundMessage="No levels found"
+              nothingFoundMessage="No level found, please create a level in the level section."
               size={'sm'}
             />
           </Stack>
@@ -173,6 +173,7 @@ function App() {
         isOpen={openViewModal}
         onClose={() => setOpenViewModal(false)}
         employee={selectedEmployee}
+        gradeLevels={gradeState.gradeLevels}
       />
 
       <ConfirmDeleteModal

@@ -1,4 +1,4 @@
-import type { Employee } from '@/types'
+import type { Employee, GradeLevel } from '@/types'
 import {
   Modal,
   Text,
@@ -27,14 +27,20 @@ interface EmployeeViewModalProps {
   isOpen: boolean
   onClose: () => void
   employee: Employee | null
+  gradeLevels: GradeLevel[]
 }
 
 export const EmployeeViewModal = ({
   isOpen,
   onClose,
   employee,
+  gradeLevels,
 }: EmployeeViewModalProps) => {
   if (!employee) return null
+
+  const gradeLevel = gradeLevels.find(
+    (level: GradeLevel) => level.id === employee.gradeLevel,
+  )
 
   return (
     <Modal
@@ -152,7 +158,7 @@ export const EmployeeViewModal = ({
                 <Text span fw={500}>
                   Grade Level:
                 </Text>
-                <Text>{employee.gradeLevel}</Text>
+                <Text>{gradeLevel?.name}</Text>
               </Group>
             </Stack>
           </Box>
