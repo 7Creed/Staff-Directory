@@ -1,189 +1,48 @@
-// import type { Employee } from '@/types'
-// import { useEmployeeContext } from '@/context/EmployeeContext'
+// import { useId } from 'react'
 
-// import { Modal } from '@mantine/core'
-// import { useState } from 'react'
-// import { v4 as uuidv4 } from 'uuid'
-
-// const AddEmployeeModal = ({
-//   onClose,
-//   isOpen,
-// }: {
-//   onClose: () => void
-//   isOpen: boolean
-// }) => {
-//   const { state, dispatch } = useEmployeeContext()
-
-//   const [formData, setFormData] = useState<Partial<Employee>>({
-//     name: '',
-//     department: '',
-//     role: '',
-//     position: '',
-//     gradeLevel: '',
-//     country: '',
-//     address: '',
-//   })
-
-//   const handleChange = (field: keyof Employee, value: any) => {
-//     setFormData((prev) => ({ ...prev, [field]: value }))
-//   }
-
-//   const handleSubmit = () => {
-//     if (!formData.name || !formData.department) {
-//       alert('Name and Department are required.')
-//       return
-//     }
-
-//     const newEmployee: Employee = {
-//       ...(formData as Employee),
-//       id: uuidv4(),
-//       gradeLevel: formData.gradeLevel ?? '',
-//     }
-
-//     dispatch({ type: 'ADD_EMPLOYEE', payload: newEmployee })
-
-//     onClose()
-//   }
-
-//   console.log(state.countries)
-
-//   return (
-//     <Modal onClose={onClose} opened={isOpen}>
-//       {' '}
-//       <div className="">
-//         <div className="">
-//           <h2 className="text-xl font-bold mb-4">Add New Employee</h2>
-
-//           <div className="space-y-3">
-//             <label>
-//               Name <span className="text-red-500">*</span>
-//             </label>
-//             <br />
-//             <input
-//               className="w-full border p-2 rounded"
-//               placeholder="Name"
-//               onChange={(e) => handleChange('name', e.target.value)}
-//               required
-//             />
-
-//             <label>
-//               Department <span className="text-red-500">*</span>
-//             </label>
-//             <br />
-//             <input
-//               className="w-full border p-2 rounded"
-//               placeholder="Department"
-//               onChange={(e) => handleChange('department', e.target.value)}
-//               required
-//             />
-
-//             <label>
-//               Role <span className="text-red-500">*</span>
-//             </label>
-//             <br />
-//             <input
-//               className="w-full border p-2 rounded"
-//               placeholder="Role"
-//               onChange={(e) => handleChange('role', e.target.value)}
-//               required
-//             />
-
-//             {/* <label>
-//             Name <span className="text-red-500">*</span>
-//           </label> */}
-//             <label>
-//               Position <span className="text-red-500">*</span>
-//             </label>
-//             <br />
-//             <input
-//               className="w-full border p-2 rounded"
-//               placeholder="Position"
-//               onChange={(e) => handleChange('position', e.target.value)}
-//             />
-
-//             <label>
-//               Country <span className="text-red-500">*</span>
-//             </label>
-//             <br />
-//             <select
-//               name="country"
-//               className="w-full border p-2 rounded mb-3"
-//               value={formData.country}
-//               onChange={(e) => handleChange('country', e.target.value)}
-//             >
-//               <option value="">— None —</option>
-//               {/* <option value="">Select Grade</option> */}
-//               {Object.keys(state.countries).map((g) => (
-//                 <option key={g.id} value={g.title}>
-//                   {g.title}
-//                 </option>
-//               ))}
-//             </select>
-//             <input
-//               className="w-full border p-2 rounded"
-//               placeholder="Country"
-//               onChange={(e) => handleChange('country', e.target.value)}
-//               required
-//             />
-
-//             <select
-//               name="gradeLevel"
-//               className="w-full border p-2 rounded mb-3"
-//               value={formData.gradeLevel}
-//               onChange={(e) => handleChange('gradeLevel', e.target.value)}
-//             >
-//               <option value="">— None —</option>
-//               {/* <option value="">Select Grade</option> */}
-//               {state.gradeLevels.map((g) => (
-//                 <option key={g.id} value={g.title}>
-//                   {g.title}
-//                 </option>
-//               ))}
-//             </select>
-//           </div>
-
-//           <div className="mt-6 flex justify-end gap-2">
-//             <button
-//               className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-//               onClick={onClose}
-//             >
-//               Cancel
-//             </button>
-//             <button
-//               className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-//               onClick={handleSubmit}
-//             >
-//               Add Employee
-//             </button>
-//           </div>
-//         </div>
-//       </div>
-//     </Modal>
-//   )
-// }
-
-// export default AddEmployeeModal
-
-import { Modal, TextInput, Button, Select, Group, Box } from '@mantine/core'
+import {
+  Modal,
+  TextInput,
+  Button,
+  Select,
+  Group,
+  Box,
+  Flex,
+} from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { useEmployeeContext } from '@/context/EmployeeContext'
-import { useId } from 'react'
+import { v4 as uuidv4 } from 'uuid'
+import type { Employee } from '@/types'
+import { useEffect, useState } from 'react'
+import { notifications } from '@mantine/notifications'
+import { useGradeLevelContext } from '@/context/GradeLevelContext'
+
+interface AddEmployeeModalProps {
+  isOpen: boolean
+  onClose: () => void
+  employeeToEdit?: Employee | null
+}
+// (ft: table, level, updated)
 
 const AddEmployeeModal = ({
   isOpen,
   onClose,
-}: {
-  isOpen: boolean
-  onClose: () => void
-}) => {
+  employeeToEdit,
+}: AddEmployeeModalProps) => {
   const { state, dispatch } = useEmployeeContext()
+  const { state: gradeLevelState } = useGradeLevelContext()
+  const [isLoading, setIsLoading] = useState(false)
   const countryOptions = Object.keys(state.countries).map((c) => ({
     value: c,
     label: c,
   }))
+
+  const isEditing = !!employeeToEdit
+
   const form = useForm({
     initialValues: {
       name: '',
+      email: '',
       country: '',
       subcountry: '',
       address: '',
@@ -200,25 +59,81 @@ const AddEmployeeModal = ({
     },
   })
 
-  const handleSubmit = (values: typeof form.values) => {
-    console.log('click')
-    dispatch({
-      type: 'ADD_EMPLOYEE',
-      payload: {
-        id: useId(),
-        ...values,
-      },
-    })
-    form.reset()
-    onClose()
+  useEffect(() => {
+    if (isEditing && employeeToEdit) {
+      form.setValues({
+        name: employeeToEdit?.name,
+        email: employeeToEdit?.email,
+        country: employeeToEdit.country,
+        subcountry: employeeToEdit.subcountry,
+        address: employeeToEdit.address,
+        role: employeeToEdit.role,
+        department: employeeToEdit.department,
+        position: employeeToEdit.position,
+        gradeLevel: employeeToEdit.gradeLevel,
+      })
+    } else {
+      form.reset()
+    }
+  }, [employeeToEdit])
+
+  const handleSubmit = async (values: typeof form.values) => {
+    setIsLoading(true)
+
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+
+      if (isEditing && employeeToEdit) {
+        dispatch({
+          type: 'UPDATE_EMPLOYEE',
+          payload: {
+            id: employeeToEdit.id,
+            ...values,
+          },
+        })
+        notifications.show({
+          title: 'Success',
+          message: 'Employee updated successfully!',
+          color: 'blue',
+        })
+      } else {
+        dispatch({
+          type: 'ADD_EMPLOYEE',
+          payload: {
+            id: uuidv4(),
+            ...values,
+          },
+        })
+        notifications.show({
+          title: 'Success',
+          message: 'Employee added successfully!',
+          color: 'blue',
+        })
+      }
+
+      form.reset()
+      onClose()
+    } catch (error) {
+      notifications.show({
+        title: 'Error',
+        message: 'Error saving employee!. Please try again',
+        color: 'red',
+      })
+      console.error('Error saving employee:', error)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
     <Modal
       size={'lg'}
       opened={isOpen}
-      onClose={onClose}
-      title="Add Employee"
+      onClose={() => {
+        form.reset()
+        onClose()
+      }}
+      title={isEditing ? 'Edit Employee' : 'Add Employee'}
       centered
     >
       <Box
@@ -226,46 +141,95 @@ const AddEmployeeModal = ({
         onSubmit={form.onSubmit(handleSubmit)}
         className="space-y-3"
       >
-        <TextInput label="Full Name" {...form.getInputProps('name')} required />
+        <Flex gap={'md'}>
+          <TextInput
+            label="Full Name"
+            {...form.getInputProps('name')}
+            required
+            w={'100%'}
+          />
+          <TextInput
+            label="Email Address"
+            {...form.getInputProps('email')}
+            required
+            w={'100%'}
+          />
+        </Flex>
 
-        <Select
-          label="Country"
-          data={countryOptions}
-          {...form.getInputProps('country')}
-          onChange={(value) => {
-            form.setFieldValue('country', value || '')
-            form.setFieldValue('subcountry', '')
-          }}
-          required
-        />
+        <Flex gap={'md'}>
+          <Select
+            label="Country"
+            data={countryOptions}
+            {...form.getInputProps('country')}
+            onChange={(value) => {
+              form.setFieldValue('country', value || '')
+              form.setFieldValue('subcountry', '')
+            }}
+            w={'100%'}
+            required
+          />
 
-        <Select
-          label="Subcountry"
-          data={form.values.country ? state.countries[form.values.country] : []}
-          {...form.getInputProps('subcountry')}
-          required
-        />
+          <Select
+            label="Subcountry"
+            data={
+              form.values.country ? state.countries[form.values.country] : []
+            }
+            {...form.getInputProps('subcountry')}
+            w={'100%'}
+            required
+          />
+        </Flex>
 
         <TextInput label="Address" {...form.getInputProps('address')} />
 
-        <Select
-          label="Role"
-          data={[
-            { label: 'Admin', value: 'admin' },
-            { label: 'User', value: 'user' },
-          ]}
-          {...form.getInputProps('role')}
-          required
-        />
-        <TextInput label="Department" {...form.getInputProps('department')} />
-        <TextInput label="Position" {...form.getInputProps('position')} />
-        <TextInput label="Grade Level" {...form.getInputProps('gradeLevel')} />
+        <Flex gap={'md'}>
+          <Select
+            label="Role"
+            data={[
+              { label: 'Admin', value: 'admin' },
+              { label: 'User', value: 'user' },
+            ]}
+            {...form.getInputProps('role')}
+            required
+            w={'100%'}
+          />
+          <TextInput
+            label="Department"
+            {...form.getInputProps('department')}
+            w={'100%'}
+          />
+        </Flex>
+        <Flex gap={'md'}>
+          <TextInput
+            label="Position"
+            {...form.getInputProps('position')}
+            w={'100%'}
+          />
+          <Select
+            label="Grade Level"
+            data={gradeLevelState.gradeLevels.map((level) => ({
+              label: level.name,
+              value: level.id,
+            }))}
+            {...form.getInputProps('gradeLevel')}
+            required
+            w={'100%'}
+          />
+        </Flex>
 
         <Group justify="flex-end" mt="md">
-          <Button variant="default" onClick={onClose}>
+          <Button
+            variant="default"
+            onClick={() => {
+              form.reset()
+              onClose()
+            }}
+          >
             Cancel
           </Button>
-          <Button type="submit">Save</Button>
+          <Button type="submit" loading={isLoading}>
+            {isEditing ? 'Update' : 'Save'}
+          </Button>
         </Group>
       </Box>
     </Modal>

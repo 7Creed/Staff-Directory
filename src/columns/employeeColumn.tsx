@@ -1,11 +1,19 @@
-import type { Employee } from '@/types'
+import type { Employee, GradeLevel } from '@/types'
 import type { ColumnDefinition } from '@/types/global.type'
 import { ActionIcon, Badge, Box, Group, Menu, Text } from '@mantine/core'
-import { IconDots, IconEye, IconTrash, IconUser } from '@tabler/icons-react'
+import {
+  IconDots,
+  IconEye,
+  IconPencil,
+  IconTrash,
+  IconUser,
+} from '@tabler/icons-react'
 
 export const employeeColumns = (
   handleView: (row: Employee) => void,
+  handleEdit: (row: Employee) => void,
   confirmDeleteEmployee: any,
+  gradeLevels: GradeLevel[],
 ): ColumnDefinition<Employee>[] => {
   return [
     {
@@ -13,12 +21,12 @@ export const employeeColumns = (
       header: 'Name',
       render: (row: Employee) => (
         <Group wrap="nowrap">
-          <Box className="flex items-center justify-center flex-shrink-0 rounded-appRadius bg-[rgba(59, 130, 246, 0.08)] size-14">
+          <Box className="flex items-center justify-center flex-shrink-0 rounded-appRadius bg-blue-50 p-2 size-8">
             <IconUser size={16} className="text-blue-600" />
           </Box>
-          <Text size="sm" className="text-gray-800 capitalize" lineClamp={1}>
+          <p className="text-gray-800 capitalize line-clamp-1 text-xs md:text-sm">
             {row.name || 'N/A'}
-          </Text>
+          </p>
         </Group>
       ),
     },
@@ -26,50 +34,64 @@ export const employeeColumns = (
       accessor: 'department',
       header: 'Department',
       render: (row: Employee) => (
-        <Text size="sm" className="text-gray-700 capitalize" lineClamp={1}>
+        <p className="text-gray-800 capitalize line-clamp-1 text-xs md:text-sm">
           {row.department || 'N/A'}
-        </Text>
+        </p>
       ),
     },
     {
       accessor: 'role',
       header: 'Role',
       render: (row: Employee) => (
-        <Text size="sm" className="text-gray-700 capitalize">
+        <p className="text-gray-800 capitalize line-clamp-1 text-xs md:text-sm">
           {row.role || 'N/A'}
-        </Text>
+        </p>
       ),
     },
     {
       accessor: 'position',
       header: 'Position',
       render: (row: Employee) => (
-        <Text size="sm" className="text-gray-700 capitalize">
+        <p className="text-gray-800 capitalize line-clamp-1 text-xs md:text-sm">
           {row.position || 'N/A'}
-        </Text>
+        </p>
       ),
     },
     {
       accessor: 'gradeLevel',
       header: 'Grade Level',
-      render: (row: Employee) => (
-        <Badge
-          className="px-3 font-400 h-20 uppercase text-[#6366f1] bg-[rgba(99, 102, 241, 0.1)]"
-          variant="light"
-          radius="xl"
-          size="sm"
-        >
-          {row.gradeLevel || 'N/A'}
-        </Badge>
-      ),
+      render: (row: Employee) => {
+        const gradeLevel = gradeLevels.find(
+          (level: GradeLevel) => level.id === row.gradeLevel,
+        )
+        return (
+          <Badge
+            className="px-3 font-400 h-20 uppercase text-[#6366f1] bg-[rgba(99, 102, 241, 0.1)]"
+            variant="light"
+            radius="xl"
+            size="sm"
+          >
+            {gradeLevel?.name || 'N/A'}
+          </Badge>
+        )
+      },
     },
     {
       accessor: 'country',
       header: 'Country',
       render: (row: Employee) => (
-        <Text size="sm" className="text-gray-700">
+        <p className="text-gray-800 capitalize line-clamp-1 text-xs md:text-sm">
           {row.country || 'N/A'}
-        </Text>
+        </p>
+      ),
+    },
+    {
+      accessor: 'subcountry',
+      header: 'Sub Country',
+      render: (row: Employee) => (
+        <p className="text-gray-800 capitalize line-clamp-1 text-xs md:text-sm">
+          {row.subcountry || 'N/A'}
+        </p>
       ),
     },
     {
@@ -77,13 +99,13 @@ export const employeeColumns = (
       header: 'Action',
       align: 'center',
       render: (row: Employee) => (
-        <Menu shadow="md" width="150px" position="bottom-end">
+        <Menu shadow="md" position="bottom-end">
           <Menu.Target>
             <ActionIcon
               variant="subtle"
               color="gray"
               aria-label="Product actions"
-              size="lg"
+              size="md"
             >
               <IconDots size="md" />
             </ActionIcon>
@@ -91,7 +113,7 @@ export const employeeColumns = (
 
           <Menu.Dropdown>
             <Menu.Item
-              leftSection={<IconEye size="md" />}
+              leftSection={<IconEye size={16} />}
               onClick={() => {
                 handleView(row)
               }}
@@ -99,7 +121,15 @@ export const employeeColumns = (
               <Text size="sm">View</Text>
             </Menu.Item>
             <Menu.Item
-              leftSection={<IconTrash size="md" />}
+              leftSection={<IconPencil size={16} />}
+              onClick={() => {
+                handleEdit(row)
+              }}
+            >
+              <Text size="sm">Edit</Text>
+            </Menu.Item>
+            <Menu.Item
+              leftSection={<IconTrash size={16} />}
               color="red"
               onClick={() => {
                 confirmDeleteEmployee(row)

@@ -1,11 +1,5 @@
 import axios from 'axios'
 
-// interface Country {
-//   name: string;
-//   country: string;
-//   // Add more fields if needed
-// }
-
 export const fetchData = async () => {
   const cached = localStorage.getItem('countryData')
   if (cached) {
@@ -19,6 +13,7 @@ export const fetchData = async () => {
 
     const fullData = response.data
 
+    console.log('fullDta', fullData)
     const countryStateMap = fullData.reduce(
       (acc: Record<string, string[]>, cur: any) => {
         const { country, subcountry } = cur

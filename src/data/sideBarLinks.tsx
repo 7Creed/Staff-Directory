@@ -8,7 +8,7 @@ export const links = [
   },
   {
     icon: <IconUserShield stroke={1.5} size={18} />,
-    label: 'Roles',
-    route: '/role',
+    label: 'Level',
+    route: '/level',
   },
 ]

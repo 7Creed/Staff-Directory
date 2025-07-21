@@ -1,30 +1,120 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
-// import logo from '../logo.svg'
+import { createFileRoute } from '@tanstack/react-router'
 import DashboardLayout from '@/layout/dashboard.layout'
-import { Button } from '@mantine/core'
+import { Button, Select, Stack } from '@mantine/core'
 import { IconPlus } from '@tabler/icons-react'
 import TableComp from '@/components/Table'
 import { employeeColumns } from '@/columns/employeeColumn'
-import { sampleEmployees } from '@/data/mockEmployee'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import AddEmployeeModal from '@/components/modal/AddEmployeeModal'
 import { useEmployeeContext } from '@/context/EmployeeContext'
+import type { Employee } from '@/types'
+import { EmployeeViewModal } from '@/components/modal/EmployeeViewModal'
+import { ConfirmDeleteModal } from '@/components/modal/ConfirmDeleteModal'
+import { notifications } from '@mantine/notifications'
+import { IconCheck, IconX } from '@tabler/icons-react'
+import { useGradeLevelContext } from '@/context/GradeLevelContext'
 
 export const Route = createFileRoute('/')({
   component: App,
 })
 
-const handleView = () => {}
-
-const confirmDelete = () => {}
-
-const handleSearch = () => {}
-
-const handleApplyFilter = () => {}
-
 function App() {
   const { state, dispatch } = useEmployeeContext()
+  const { state: gradeState } = useGradeLevelContext()
   const [openAddEmployeeModal, setOpenAddEmployeeModal] = useState(false)
+  const [openViewModal, setOpenViewModal] = useState(false)
+  const [openDeleteModal, setOpenDeleteModal] = useState(false)
+  const [selectedLevel, setSelectedLevel] = useState<string | null>(null)
+  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(
+    null,
+  )
+  const [employeeToDelete, setEmployeeToDelete] = useState<Employee | null>(
+    null,
+  )
+  const [employeeToEdit, setEmployeeToEdit] = useState<Employee | null>(null)
+  const [isDeleting, setIsDeleting] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+
+  const gradeLevelOptions = useMemo(() => {
+    return gradeState.gradeLevels.map((level) => ({
+      label: level.name,
+      value: level.id,
+    }))
+  }, [gradeState.gradeLevels])
+
+  // Filter employees based on selected level and search query
+  const filteredEmployees = useMemo(() => {
+    return state.employees.filter((employee) => {
+      // Filter by level if one is selected
+      const levelMatch = selectedLevel
+        ? employee.gradeLevel === selectedLevel
+        : true
+
+      // Filter by search query (case insensitive)
+      const searchMatch = searchQuery
+        ? employee.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          employee.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          employee.department
+            ?.toLowerCase()
+            .includes(searchQuery.toLowerCase()) ||
+          employee.position?.toLowerCase().includes(searchQuery.toLowerCase())
+        : true
+
+      return levelMatch && searchMatch
+    })
+  }, [state.employees, selectedLevel, searchQuery])
+
+  const handleView = (employee: Employee) => {
+    setSelectedEmployee(employee)
+    setOpenViewModal(true)
+  }
+
+  const handleEdit = (employee: Employee) => {
+    setEmployeeToEdit(employee)
+    setOpenAddEmployeeModal(true)
+  }
+
+  const confirmDelete = (employee: Employee) => {
+    setEmployeeToDelete(employee)
+    setOpenDeleteModal(true)
+  }
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query)
+  }
+
+  const onDeleteConfirm = async () => {
+    if (!employeeToDelete) return
+
+    setIsDeleting(true)
+    try {
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+
+      dispatch({
+        type: 'DELETE_EMPLOYEE',
+        payload: employeeToDelete.id,
+      })
+
+      notifications.show({
+        title: 'Success',
+        message: 'Employee deleted successfully',
+        color: 'green',
+        icon: <IconCheck />,
+      })
+    } catch (error) {
+      notifications.show({
+        title: 'Error',
+        message: 'Failed to delete employee',
+        color: 'red',
+        icon: <IconX />,
+      })
+    } finally {
+      setIsDeleting(false)
+      setOpenDeleteModal(false)
+      setEmployeeToDelete(null)
+    }
+  }
 
   return (
     <DashboardLayout>
@@ -33,36 +123,70 @@ function App() {
           leftSection={<IconPlus size={14} />}
           className="text-primary rounded-appRadius"
           size="xs"
-          onClick={() => setOpenAddEmployeeModal(!openAddEmployeeModal)}
+          onClick={() => {
+            setEmployeeToEdit(null)
+            setOpenAddEmployeeModal(true)
+          }}
         >
           Add Employee
         </Button>
       </div>
       <TableComp
-        data={state.employees}
-        columns={employeeColumns(handleView, confirmDelete)}
-        totalRecords={employeeColumns?.length}
-        // onPageChange={() => {}}
-        // currentPage={currentPage}
-        // isLoading={customerLoading}
-        tableTitle="Sample Employees"
+        data={filteredEmployees}
+        columns={employeeColumns(
+          handleView,
+          handleEdit,
+          confirmDelete,
+          gradeState.gradeLevels,
+        )}
+        totalRecords={filteredEmployees.length}
+        onPageChange={() => {}}
+        tableTitle="Employees"
         onSearch={handleSearch}
-        // showPagination={true}
-        onFilter={handleApplyFilter}
-        searchPlaceholder="Search by amount"
-        // onPageChange={function (page: number): void {
-        //   throw new Error('Function not implemented.')
-        // }}
+        filterComponent={
+          <Stack gap="xs">
+            <Select
+              placeholder="Select Grade Level"
+              data={gradeLevelOptions}
+              value={selectedLevel}
+              onChange={setSelectedLevel}
+              className="rounded-appRadius"
+              searchable
+              clearable
+              nothingFoundMessage="No levels found"
+              size={'sm'}
+            />
+          </Stack>
+        }
+        searchPlaceholder="Search employees..."
         currentPage={0}
         isLoading={false}
-        // onPerPageChange={(value) =>
-        //   setSearchParams((prev) => ({ ...prev, limit: Number(value) }))
-        // }
       />
 
       <AddEmployeeModal
         onClose={() => setOpenAddEmployeeModal(false)}
         isOpen={openAddEmployeeModal}
+        employeeToEdit={employeeToEdit}
+      />
+
+      <EmployeeViewModal
+        isOpen={openViewModal}
+        onClose={() => setOpenViewModal(false)}
+        employee={selectedEmployee}
+      />
+
+      <ConfirmDeleteModal
+        isOpen={openDeleteModal}
+        onClose={() => {
+          if (!isDeleting) {
+            setOpenDeleteModal(false)
+            setEmployeeToDelete(null)
+          }
+        }}
+        onConfirm={onDeleteConfirm}
+        title="Delete Employee"
+        description={`Are you sure you want to delete ${employeeToDelete?.name}?`}
+        isLoading={isDeleting}
       />
     </DashboardLayout>
   )
