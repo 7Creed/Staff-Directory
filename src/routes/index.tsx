@@ -8,6 +8,7 @@ import { employeeColumns } from '@/columns/employeeColumn'
 import { sampleEmployees } from '@/data/mockEmployee'
 import { useState } from 'react'
 import AddEmployeeModal from '@/components/modal/AddEmployeeModal'
+import { useEmployeeContext } from '@/context/EmployeeContext'
 
 export const Route = createFileRoute('/')({
   component: App,
@@ -22,6 +23,7 @@ const handleSearch = () => {}
 const handleApplyFilter = () => {}
 
 function App() {
+  const { state, dispatch } = useEmployeeContext()
   const [openAddEmployeeModal, setOpenAddEmployeeModal] = useState(false)
 
   return (
@@ -37,7 +39,7 @@ function App() {
         </Button>
       </div>
       <TableComp
-        data={sampleEmployees}
+        data={state.employees}
         columns={employeeColumns(handleView, confirmDelete)}
         totalRecords={employeeColumns?.length}
         // onPageChange={() => {}}

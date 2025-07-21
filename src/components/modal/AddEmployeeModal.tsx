@@ -201,6 +201,7 @@ const AddEmployeeModal = ({
   })
 
   const handleSubmit = (values: typeof form.values) => {
+    console.log('click')
     dispatch({
       type: 'ADD_EMPLOYEE',
       payload: {

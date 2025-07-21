@@ -21,6 +21,7 @@ export interface ReusableTableProps<T extends TableRowData> {
   onFilter?: (value: any | undefined) => void
   showSearch?: boolean
   showFilter?: boolean
+  filterComponent?: React.ReactNode
   showPagination?: boolean
   pagination?: PaginationTypes
   noDataMessage?: string

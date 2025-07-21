@@ -3,18 +3,19 @@ export interface Employee {
   name: string
   email: string
   country: string
-  state: string
+  subcountry: string
   address: string
   role: string
   department: string
   position: string
   gradeLevel?: string
-  isActive: boolean
 }
 
-export interface GradeLevel {
+export type GradeLevel = {
   id: string
-  title: string
+  name: string
+  description?: string
+  createdAt?: Date
 }
 
 export interface Country {
