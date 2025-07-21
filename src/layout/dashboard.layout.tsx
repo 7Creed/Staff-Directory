@@ -1,4 +1,4 @@
-import { useEffect, type ReactNode } from 'react'
+import { type ReactNode } from 'react'
 import {
   AppShell,
   Burger,
@@ -6,21 +6,17 @@ import {
   Text,
   Avatar,
   Box,
-  Button,
   ScrollArea,
 } from '@mantine/core'
 import { useDisclosure, useMediaQuery } from '@mantine/hooks'
-import { IconArrowUpRight, IconBellFilled } from '@tabler/icons-react'
-import { Link, useLocation, useNavigate } from '@tanstack/react-router'
+import { IconBellFilled } from '@tabler/icons-react'
+import { Link } from '@tanstack/react-router'
 import { links } from '../data/sideBarLinks'
 
 const DashboardLayout = ({ children }: { children: ReactNode }) => {
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure()
   const [desktopOpened] = useDisclosure(true)
   const isMobile = useMediaQuery('(max-width: 768px)')
-  const { pathname } = useLocation()
-
-  const navigate = useNavigate()
 
   return (
     <AppShell
@@ -99,18 +95,6 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
             <br /> for easy review of your sales and management.
           </Text>
           <div className="flex items-end gap-3">
-            {/* <Button
-              variant="filled"
-              radius={'xl'}
-              size="xs"
-              fullWidth
-              fz="xs"
-              // bg="oklch(62.3% 0.214 259.815)"
-              rightSection={<IconArrowUpRight size={12} />}
-              className="bg-primary"
-            >
-              Download App
-            </Button> */}
             <Box mb="md">
               <img src="/sidebar-image.svg" alt="Mobile App" />
             </Box>
