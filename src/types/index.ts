@@ -9,6 +9,7 @@ export interface Employee {
   department: string
   position: string
   gradeLevel?: string
+  isActive?: boolean
 }
 
 export type GradeLevel = {

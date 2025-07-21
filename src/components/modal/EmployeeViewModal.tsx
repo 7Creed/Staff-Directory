@@ -20,7 +20,6 @@ import {
   IconBriefcase,
   IconStar,
   IconMail,
-  IconPhone,
   IconId,
 } from '@tabler/icons-react'
 
