@@ -1,301 +1,124 @@
-Welcome to your new TanStack app! 
+# Staff Directory Web App
 
-# Getting Started
+## Overview
 
-To run this application:
+This is a **Staff Directory** web application built as a take-home assessment for PilotSpan. It showcases a list of employees in an organization with the ability to **add**, **edit**, **delete**, **view**, and **assign** employees to grade levels. The application demonstrates proficiency in component design, responsive UI/UX, API handling, and state management using modern React practices.
+
+---
+
+## Tech Stack
+
+- **Framework:** React + Vite
+- **Styling:** Tailwind CSS, Mantine UI
+- **State Management:** `useReducer`, Context API
+- **Persistence:** Local Storage
+- **Package Manager:** pnpm
+- **API Handling:** TanStack Query (react-query)
+- **Other Tools:** Typescript (optional for extension)
+
+---
+
+## Features
+
+- Display list of employees
+- Add new employee
+- Edit existing employee
+- View employee profile
+- Delete employee
+- Each employee contains:
+  - Name
+  - Country
+  - State
+  - Address
+  - Role
+  - Department
+  - Grade level (optional)
+
+- Manage grade levels:
+  - Create new grade levels (e.g., LVL1, LVL2, LVL3)
+  - Delete grade levels
+  - Assign employee to a grade level
+
+- Filter employees by name or grade level
+- Responsive design for mobile and desktop
+- Stores data in `localStorage` after the first fetch
+
+---
+
+## API
+
+- **World Cities API:**
+  `https://pkgstore.datahub.io/core/world-cities/world-cities_json/data/5b3dd46ad10990bca47b04b4739a02ba/world-cities_json.json`
+  - Used to populate country and state options for employee form.
+
+---
+
+## Project Structure
+
+```
+src/
+├── assets/              # Static images or icons
+├── components/          # Reusable UI components (Header, EmployeeCard, Modal, etc.)
+├── context/             # Context providers for state
+├── data/                # Static JSON or initial grade data
+├── hooks/               # Custom React hooks (e.g. useLocalStorage)
+├── pages/               # Page-level components (Home, EmployeeProfile)
+├── services/            # API interaction and helper functions
+├── utils/               # Utility functions
+├── App.tsx              # Main App wrapper
+└── main.tsx             # Entry point
+```
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js >= 16
+- pnpm installed globally
+
+### Installation
 
 ```bash
+git clone https://github.com/7Creed/Staff-Directory.git
+cd Staff-Directory
 pnpm install
-pnpm start  
+pnpm dev
 ```
 
-# Building For Production
+---
 
-To build this application for production:
+## UI Walkthrough
 
-```bash
-pnpm build
-```
+- **Header:** Displays app title and `Add Employee` button
+- **Filters:** Search bar and grade level filter dropdown
+- **Employee Grid:** Displays employee cards with name, role, and quick actions
+- **Add/Edit Modal:** Form to create or edit employee records
+- **Grade Management:** Section to add or delete grade levels
+- **View Profile:** Full view of employee data including address, country, state, etc.
 
-## Testing
+---
 
-This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:
+## Local Storage
 
-```bash
-pnpm test
-```
+- On first load, country/state data is fetched and stored in local storage.
+- Employee and grade level data is also persisted in local storage to maintain state across refreshes.
 
-## Styling
+---
 
-This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
+## Acknowledgements
 
+- [Mantine UI](https://mantine.dev/)
+- [TanStack Query](https://tanstack.com/query/latest)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [World Cities API (DataHub)](https://datahub.io/core/world-cities)
 
-## Linting & Formatting
+---
 
+## 📫 Contact
 
-This project uses [eslint](https://eslint.org/) and [prettier](https://prettier.io/) for linting and formatting. Eslint is configured using [tanstack/eslint-config](https://tanstack.com/config/latest/docs/eslint). The following scripts are available:
+**Author:** Frank Obika
+**GitHub:** [@7Creed](https://github.com/7Creed)
 
-```bash
-pnpm lint
-pnpm format
-pnpm check
-```
-
-
-
-## Routing
-This project uses [TanStack Router](https://tanstack.com/router). The initial setup is a file based router. Which means that the routes are managed as files in `src/routes`.
-
-### Adding A Route
-
-To add a new route to your application just add another a new file in the `./src/routes` directory.
-
-TanStack will automatically generate the content of the route file for you.
-
-Now that you have two routes you can use a `Link` component to navigate between them.
-
-### Adding Links
-
-To use SPA (Single Page Application) navigation you will need to import the `Link` component from `@tanstack/react-router`.
-
-```tsx
-import { Link } from "@tanstack/react-router";
-```
-
-Then anywhere in your JSX you can use it like so:
-
-```tsx
-<Link to="/about">About</Link>
-```
-
-This will create a link that will navigate to the `/about` route.
-
-More information on the `Link` component can be found in the [Link documentation](https://tanstack.com/router/v1/docs/framework/react/api/router/linkComponent).
-
-### Using A Layout
-
-In the File Based Routing setup the layout is located in `src/routes/__root.tsx`. Anything you add to the root route will appear in all the routes. The route content will appear in the JSX where you use the `<Outlet />` component.
-
-Here is an example layout that includes a header:
-
-```tsx
-import { Outlet, createRootRoute } from '@tanstack/react-router'
-import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
-
-import { Link } from "@tanstack/react-router";
-
-export const Route = createRootRoute({
-  component: () => (
-    <>
-      <header>
-        <nav>
-          <Link to="/">Home</Link>
-          <Link to="/about">About</Link>
-        </nav>
-      </header>
-      <Outlet />
-      <TanStackRouterDevtools />
-    </>
-  ),
-})
-```
-
-The `<TanStackRouterDevtools />` component is not required so you can remove it if you don't want it in your layout.
-
-More information on layouts can be found in the [Layouts documentation](https://tanstack.com/router/latest/docs/framework/react/guide/routing-concepts#layouts).
-
-
-## Data Fetching
-
-There are multiple ways to fetch data in your application. You can use TanStack Query to fetch data from a server. But you can also use the `loader` functionality built into TanStack Router to load the data for a route before it's rendered.
-
-For example:
-
-```tsx
-const peopleRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/people",
-  loader: async () => {
-    const response = await fetch("https://swapi.dev/api/people");
-    return response.json() as Promise<{
-      results: {
-        name: string;
-      }[];
-    }>;
-  },
-  component: () => {
-    const data = peopleRoute.useLoaderData();
-    return (
-      <ul>
-        {data.results.map((person) => (
-          <li key={person.name}>{person.name}</li>
-        ))}
-      </ul>
-    );
-  },
-});
-```
-
-Loaders simplify your data fetching logic dramatically. Check out more information in the [Loader documentation](https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#loader-parameters).
-
-### React-Query
-
-React-Query is an excellent addition or alternative to route loading and integrating it into you application is a breeze.
-
-First add your dependencies:
-
-```bash
-pnpm add @tanstack/react-query @tanstack/react-query-devtools
-```
-
-Next we'll need to create a query client and provider. We recommend putting those in `main.tsx`.
-
-```tsx
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
-// ...
-
-const queryClient = new QueryClient();
-
-// ...
-
-if (!rootElement.innerHTML) {
-  const root = ReactDOM.createRoot(rootElement);
-
-  root.render(
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>
-  );
-}
-```
-
-You can also add TanStack Query Devtools to the root route (optional).
-
-```tsx
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-
-const rootRoute = createRootRoute({
-  component: () => (
-    <>
-      <Outlet />
-      <ReactQueryDevtools buttonPosition="top-right" />
-      <TanStackRouterDevtools />
-    </>
-  ),
-});
-```
-
-Now you can use `useQuery` to fetch your data.
-
-```tsx
-import { useQuery } from "@tanstack/react-query";
-
-import "./App.css";
-
-function App() {
-  const { data } = useQuery({
-    queryKey: ["people"],
-    queryFn: () =>
-      fetch("https://swapi.dev/api/people")
-        .then((res) => res.json())
-        .then((data) => data.results as { name: string }[]),
-    initialData: [],
-  });
-
-  return (
-    <div>
-      <ul>
-        {data.map((person) => (
-          <li key={person.name}>{person.name}</li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-export default App;
-```
-
-You can find out everything you need to know on how to use React-Query in the [React-Query documentation](https://tanstack.com/query/latest/docs/framework/react/overview).
-
-## State Management
-
-Another common requirement for React applications is state management. There are many options for state management in React. TanStack Store provides a great starting point for your project.
-
-First you need to add TanStack Store as a dependency:
-
-```bash
-pnpm add @tanstack/store
-```
-
-Now let's create a simple counter in the `src/App.tsx` file as a demonstration.
-
-```tsx
-import { useStore } from "@tanstack/react-store";
-import { Store } from "@tanstack/store";
-import "./App.css";
-
-const countStore = new Store(0);
-
-function App() {
-  const count = useStore(countStore);
-  return (
-    <div>
-      <button onClick={() => countStore.setState((n) => n + 1)}>
-        Increment - {count}
-      </button>
-    </div>
-  );
-}
-
-export default App;
-```
-
-One of the many nice features of TanStack Store is the ability to derive state from other state. That derived state will update when the base state updates.
-
-Let's check this out by doubling the count using derived state.
-
-```tsx
-import { useStore } from "@tanstack/react-store";
-import { Store, Derived } from "@tanstack/store";
-import "./App.css";
-
-const countStore = new Store(0);
-
-const doubledStore = new Derived({
-  fn: () => countStore.state * 2,
-  deps: [countStore],
-});
-doubledStore.mount();
-
-function App() {
-  const count = useStore(countStore);
-  const doubledCount = useStore(doubledStore);
-
-  return (
-    <div>
-      <button onClick={() => countStore.setState((n) => n + 1)}>
-        Increment - {count}
-      </button>
-      <div>Doubled - {doubledCount}</div>
-    </div>
-  );
-}
-
-export default App;
-```
-
-We use the `Derived` class to create a new store that is derived from another store. The `Derived` class has a `mount` method that will start the derived store updating.
-
-Once we've created the derived store we can use it in the `App` component just like we would any other store using the `useStore` hook.
-
-You can find out everything you need to know on how to use TanStack Store in the [TanStack Store documentation](https://tanstack.com/store/latest).
-
-# Demo files
-
-Files prefixed with `demo` can be safely deleted. They are there to provide a starting point for you to play around with the features you've installed.
-
-# Learn More
-
-You can learn more about all of the offerings from TanStack in the [TanStack documentation](https://tanstack.com).
+---
