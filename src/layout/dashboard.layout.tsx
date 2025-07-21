@@ -88,17 +88,11 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
 
         <AppShell.Section className="p-2 rounded-lg text-center mb-5">
           <Text size="sm" ta={'left'} fw={500} mb="xs">
-            Want to experience in mobile?
+            Welcome to Our Company Employee directory
           </Text>
           <Text size="xs" c="dimmed" lh={'17px'} fw={400} ta={'left'}>
-            You can download our mobile app
-            <br /> for easy review of your sales and management.
+            You can start by adding a new employee
           </Text>
-          <div className="flex items-end gap-3">
-            <Box mb="md">
-              <img src="/sidebar-image.svg" alt="Mobile App" />
-            </Box>
-          </div>
         </AppShell.Section>
       </AppShell.Navbar>
 
