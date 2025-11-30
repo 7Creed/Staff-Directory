@@ -98,7 +98,7 @@ const AddEmployeeModal = ({
           payload: {
             id: uuidv4(),
             message: `Employee "${values.name}" was updated`,
-            type: 'success',
+            type: 'info',
             timestamp: new Date(),
             entity: 'employee',
             user: {
@@ -125,7 +125,7 @@ const AddEmployeeModal = ({
           payload: {
             id: uuidv4(),
             message: `Employee "${values.name}" was added`,
-            type: 'success',
+            type: 'info',
             timestamp: new Date(),
             entity: 'employee',
             user: {

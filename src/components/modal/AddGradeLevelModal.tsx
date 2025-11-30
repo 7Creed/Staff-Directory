@@ -57,7 +57,7 @@ const AddGradeLevelModal = ({
         payload: {
           id: uuidv4(),
           message: `Grade Level "${values.name}" was updated`,
-          type: 'success',
+          type: 'info',
           timestamp: new Date(),
           entity: 'Grade level',
           user: {
@@ -80,7 +80,7 @@ const AddGradeLevelModal = ({
         payload: {
           id: uuidv4(),
           message: `Grade Level "${values.name}" was updated`,
-          type: 'success',
+          type: 'info',
           timestamp: new Date(),
           entity: 'Grade level',
           user: {

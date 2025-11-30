@@ -10,23 +10,6 @@ import {
   Button,
 } from '@mantine/core'
 import { useState } from 'react'
-// import {
-//   IconInfoCircle,
-//   IconAlertTriangle,
-//   IconCheck,
-//   IconX,
-//   IconUser,
-//   IconServer,
-// } from '@tabler/icons-react'
-
-// const typeIcon = {
-//   info: <IconInfoCircle size={18} color="#1c7ed6" />,
-//   warning: <IconAlertTriangle size={18} color="#f59f00" />,
-//   error: <IconX size={18} color="#e03131" />,
-//   success: <IconCheck size={18} color="#2f9e44" />,
-//   system: <IconServer size={18} color="#7048e8" />,
-//   user: <IconUser size={18} color="#495057" />,
-// }
 
 const typeColor = {
   info: 'blue',
