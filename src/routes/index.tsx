@@ -13,6 +13,8 @@ import { ConfirmDeleteModal } from '@/components/modal/ConfirmDeleteModal'
 import { notifications } from '@mantine/notifications'
 import { IconCheck, IconX } from '@tabler/icons-react'
 import { useGradeLevelContext } from '@/context/GradeLevelContext'
+import { useRecentActivityContext } from '@/context/RecentActivityContext'
+import { v4 as uuidv4 } from 'uuid'
 
 export const Route = createFileRoute('/')({
   component: App,
@@ -21,6 +23,7 @@ export const Route = createFileRoute('/')({
 function App() {
   const { state, dispatch } = useEmployeeContext()
   const { state: gradeState } = useGradeLevelContext()
+  const { dispatch: activityDispatch } = useRecentActivityContext()
   const [openAddEmployeeModal, setOpenAddEmployeeModal] = useState(false)
   const [openViewModal, setOpenViewModal] = useState(false)
   const [openDeleteModal, setOpenDeleteModal] = useState(false)
@@ -94,6 +97,20 @@ function App() {
       dispatch({
         type: 'DELETE_EMPLOYEE',
         payload: employeeToDelete.id,
+      })
+      activityDispatch({
+        type: 'ADD_ACTIVITY',
+        payload: {
+          id: uuidv4(),
+          message: `Employee "${employeeToDelete.name}" was added`,
+          type: 'warning',
+          timestamp: new Date(),
+          entity: 'employee',
+          user: {
+            id: 1,
+            name: 'Admin',
+          },
+        },
       })
 
       notifications.show({

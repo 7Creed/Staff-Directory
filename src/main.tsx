@@ -14,6 +14,7 @@ import './styles.css'
 import reportWebVitals from './reportWebVitals.ts'
 import { EmployeeProvider } from './context/EmployeeContext.tsx'
 import { GradeLevelProvider } from './context/GradeLevelContext.tsx'
+import { RecentActivityProvider } from './context/RecentActivityContext.tsx'
 
 const router = createRouter({
   routeTree,
@@ -39,13 +40,15 @@ if (rootElement && !rootElement.innerHTML) {
     <StrictMode>
       <MantineProvider>
         <Notifications position={'top-right'} />
-        <GradeLevelProvider>
-          <EmployeeProvider>
-            <TanStackQueryProvider.Provider>
-              <RouterProvider router={router} />
-            </TanStackQueryProvider.Provider>
-          </EmployeeProvider>
-        </GradeLevelProvider>
+        <RecentActivityProvider>
+          <GradeLevelProvider>
+            <EmployeeProvider>
+              <TanStackQueryProvider.Provider>
+                <RouterProvider router={router} />
+              </TanStackQueryProvider.Provider>
+            </EmployeeProvider>
+          </GradeLevelProvider>
+        </RecentActivityProvider>
       </MantineProvider>
     </StrictMode>,
   )

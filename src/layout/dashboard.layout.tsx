@@ -12,6 +12,7 @@ import { useDisclosure, useMediaQuery } from '@mantine/hooks'
 import { IconBellFilled } from '@tabler/icons-react'
 import { Link } from '@tanstack/react-router'
 import { links } from '../data/sideBarLinks'
+import RecentActivity from '@/components/RecentActivity'
 
 const DashboardLayout = ({ children }: { children: ReactNode }) => {
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure()
@@ -23,6 +24,11 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
       header={{ height: 60 }}
       navbar={{
         width: 250,
+        breakpoint: 'sm',
+        collapsed: { mobile: !mobileOpened, desktop: !desktopOpened },
+      }}
+      aside={{
+        width: 350,
         breakpoint: 'sm',
         collapsed: { mobile: !mobileOpened, desktop: !desktopOpened },
       }}
@@ -95,6 +101,10 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
           </Text>
         </AppShell.Section>
       </AppShell.Navbar>
+
+      <AppShell.Aside p={'sm'} component={ScrollArea}>
+        <RecentActivity />
+      </AppShell.Aside>
 
       <AppShell.Main bg={'#f6f6f6'}>{children}</AppShell.Main>
     </AppShell>

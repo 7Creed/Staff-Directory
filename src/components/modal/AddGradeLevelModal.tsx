@@ -4,6 +4,7 @@ import { useGradeLevelContext } from '@/context/GradeLevelContext'
 import { v4 as uuidv4 } from 'uuid'
 import type { GradeLevel } from '@/types'
 import { useEffect } from 'react'
+import { useRecentActivityContext } from '@/context/RecentActivityContext'
 
 interface AddGradeLevelModalProps {
   isOpen: boolean
@@ -17,6 +18,7 @@ const AddGradeLevelModal = ({
   gradeLevelToEdit,
 }: AddGradeLevelModalProps) => {
   const { dispatch } = useGradeLevelContext()
+  const { dispatch: activityDispatch } = useRecentActivityContext()
   const isEditing = !!gradeLevelToEdit
 
   const form = useForm({
@@ -50,6 +52,20 @@ const AddGradeLevelModal = ({
           ...values,
         },
       })
+      activityDispatch({
+        type: 'ADD_ACTIVITY',
+        payload: {
+          id: uuidv4(),
+          message: `Grade Level "${values.name}" was updated`,
+          type: 'success',
+          timestamp: new Date(),
+          entity: 'Grade level',
+          user: {
+            id: 1,
+            name: 'Admin',
+          },
+        },
+      })
     } else {
       dispatch({
         type: 'ADD_GRADE_LEVEL',
@@ -57,6 +73,20 @@ const AddGradeLevelModal = ({
           id: uuidv4(),
           ...values,
           createdAt: new Date(),
+        },
+      })
+      activityDispatch({
+        type: 'ADD_ACTIVITY',
+        payload: {
+          id: uuidv4(),
+          message: `Grade Level "${values.name}" was updated`,
+          type: 'success',
+          timestamp: new Date(),
+          entity: 'Grade level',
+          user: {
+            id: 1,
+            name: 'Admin',
+          },
         },
       })
     }

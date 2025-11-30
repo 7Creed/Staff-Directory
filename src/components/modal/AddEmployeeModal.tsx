@@ -16,6 +16,7 @@ import type { Employee } from '@/types'
 import { useEffect, useState } from 'react'
 import { notifications } from '@mantine/notifications'
 import { useGradeLevelContext } from '@/context/GradeLevelContext'
+import { useRecentActivityContext } from '@/context/RecentActivityContext'
 
 interface AddEmployeeModalProps {
   isOpen: boolean
@@ -30,6 +31,7 @@ const AddEmployeeModal = ({
   employeeToEdit,
 }: AddEmployeeModalProps) => {
   const { state, dispatch } = useEmployeeContext()
+  const { dispatch: activityDispatch } = useRecentActivityContext()
   const { state: gradeLevelState } = useGradeLevelContext()
   const [isLoading, setIsLoading] = useState(false)
   const countryOptions = Object.keys(state.countries).map((c) => ({
@@ -91,6 +93,20 @@ const AddEmployeeModal = ({
             ...values,
           },
         })
+        activityDispatch({
+          type: 'ADD_ACTIVITY',
+          payload: {
+            id: uuidv4(),
+            message: `Employee "${values.name}" was updated`,
+            type: 'success',
+            timestamp: new Date(),
+            entity: 'employee',
+            user: {
+              id: 1,
+              name: 'Admin',
+            },
+          },
+        })
         notifications.show({
           title: 'Success',
           message: 'Employee updated successfully!',
@@ -102,6 +118,20 @@ const AddEmployeeModal = ({
           payload: {
             id: uuidv4(),
             ...values,
+          },
+        })
+        activityDispatch({
+          type: 'ADD_ACTIVITY',
+          payload: {
+            id: uuidv4(),
+            message: `Employee "${values.name}" was added`,
+            type: 'success',
+            timestamp: new Date(),
+            entity: 'employee',
+            user: {
+              id: 1,
+              name: 'Admin',
+            },
           },
         })
         notifications.show({

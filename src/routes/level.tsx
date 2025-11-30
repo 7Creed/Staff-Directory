@@ -9,6 +9,8 @@ import { useGradeLevelContext } from '@/context/GradeLevelContext'
 import { ConfirmDeleteModal } from '@/components/modal/ConfirmDeleteModal'
 import type { GradeLevel } from '@/types'
 import AddGradeLevelModal from '@/components/modal/AddGradeLevelModal'
+import { useRecentActivityContext } from '@/context/RecentActivityContext'
+import { v4 as uuidv4 } from 'uuid'
 
 export const Route = createFileRoute('/level')({
   component: RouteComponent,
@@ -16,6 +18,7 @@ export const Route = createFileRoute('/level')({
 
 function RouteComponent() {
   const { state, dispatch } = useGradeLevelContext()
+  const { dispatch: activityDispatch } = useRecentActivityContext()
   const [openAddModal, setOpenAddModal] = useState(false)
   const [openDeleteModal, setOpenDeleteModal] = useState(false)
   const [gradeLevelToEdit, setGradeLevelToEdit] = useState<GradeLevel | null>(
@@ -37,6 +40,20 @@ function RouteComponent() {
   const onDeleteConfirm = () => {
     if (gradeLevelToDelete) {
       dispatch({ type: 'DELETE_GRADE_LEVEL', payload: gradeLevelToDelete.id })
+      activityDispatch({
+        type: 'ADD_ACTIVITY',
+        payload: {
+          id: uuidv4(),
+          message: `Employee "${gradeLevelToDelete.name}" was added`,
+          type: 'warning',
+          timestamp: new Date(),
+          entity: 'gradeLevel',
+          user: {
+            id: 1,
+            name: 'Admin',
+          },
+        },
+      })
       setOpenDeleteModal(false)
       setGradeLevelToDelete(null)
     }
